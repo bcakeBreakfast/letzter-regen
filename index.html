@@ -300,6 +300,67 @@ button:focus-visible{outline:2px solid var(--signal);outline-offset:2px}
     border:1px solid var(--ink);border-bottom-width:1px;box-shadow:0 -6px 24px rgba(0,0,0,.28)}
 }
 @media (prefers-reduced-motion:reduce){.tut-ring,.tut-tap,.tut-tap::before,.tut-tap::after,.tut-card.enter,.tut-hint::before{animation:none}}
+
+/* ===== design system: one gutter, one spacing scale, one radius pair, one shadow ===== */
+:root{--g:12px;--s1:4px;--s2:8px;--s3:12px;--s4:16px;--rs:12px;--rb:8px;--bd:1.5px solid var(--ink);--sh:0 4px 16px rgba(16,22,33,.16);--hb:40px}
+.rb,.zoom button,.ph .x,.mast .x,.bm-head .x{width:var(--hb);height:var(--hb);border-radius:var(--rb);border:var(--bd);box-shadow:none;background:var(--paper);font-size:13px}
+.zoom button,.top button,.mode{box-shadow:var(--sh)}
+.top button,.zoom button{border:var(--bd)}
+.top{gap:var(--s2)}
+.top button{height:var(--hb);border-radius:var(--rb);padding-inline:var(--s3)}
+.zoom{gap:var(--s2)}
+.panel{padding:var(--s4);gap:var(--s3)}
+.ph{gap:var(--s3);padding-bottom:var(--s3);border-bottom:var(--bd)}
+.ph b{font-size:20px}
+.pgrid{gap:var(--s3) var(--s3);padding-top:var(--s3)}
+.pact{gap:var(--s2)}
+.pact button,.mini{height:44px;border-radius:var(--rb);border:var(--bd);padding-inline:var(--s4);flex:1 1 calc(50% - var(--s2));text-align:center;justify-content:center}
+.pnote{line-height:1.45}
+.qa{border:var(--bd);border-radius:var(--rs);box-shadow:var(--sh);padding:var(--s3);gap:var(--s2);min-width:0;max-width:calc(100% - 2*var(--g))}
+.qa .qh{padding:0;align-items:center;gap:var(--s3)}
+.qa .qh b{font-size:15px}
+.qa .qb{gap:var(--s2)}
+.qa button{height:var(--hb);border-radius:var(--rb);border:var(--bd);padding-inline:var(--s3)}
+.qa button.i{width:var(--hb);border-radius:var(--rb);flex:none;font-size:16px}
+.qa .qh button.i{height:32px;width:32px;margin:-4px -4px -4px auto}
+.qa button.off{opacity:.35;border-style:dashed}
+.more{border-radius:var(--rb);border:var(--bd)}
+body.panel-open .stage .top{visibility:hidden}
+.pact .mini{flex:1 1 calc(50% - var(--s2))}
+.ord{gap:var(--s2);padding-block:var(--s3)}
+.ord:first-child{border-top:0}
+.ord .foot{gap:var(--s2)}
+.ord .rw{flex:1 0 auto;white-space:nowrap}
+.ord .foot .mini{flex:0 0 auto;height:var(--hb);border-radius:var(--rb);border:var(--bd);padding-inline:var(--s3)}
+.rows{border-top:0}
+.row{padding-block:var(--s2)}
+.ph+.kbig,.ph+.gwt,.ph+.pgrid{border-top:0;padding-top:0}
+@media (max-width:899px){
+  #app>header{padding:calc(env(safe-area-inset-top,0px) + var(--s2)) var(--g) var(--s2)}
+  .r1{gap:0 var(--s3);padding-bottom:var(--s2)}
+  .r1 .ctl{gap:var(--s2)}
+  .rb{width:36px;height:36px}
+  .r2{padding:var(--s2) 0 0;gap:var(--s2) var(--s4);align-items:center;padding-right:0}
+  .more{position:static;margin-left:auto;height:28px;padding-inline:var(--s2);font-size:11px}
+  .cap{margin-top:var(--s2)}
+  .stage .top{top:calc(var(--hudH,110px) + var(--g));left:var(--g);right:auto}
+  .stage .top button:not(.alert){width:var(--hb);height:var(--hb);border-radius:var(--rb)}
+  .stage .top button .dot{top:4px;right:4px}
+  .stage .mode{top:calc(var(--hudH,110px) + var(--g));left:var(--g);right:var(--g);border-radius:var(--rb);border:var(--bd);height:var(--hb)}
+  .stage .zoom{right:var(--g);bottom:calc(var(--barH,62px) + var(--g))}
+  .stage .zoom button{width:var(--hb);height:var(--hb)}
+  #app>.tools{left:var(--g);right:var(--g);bottom:calc(env(safe-area-inset-bottom,0px) + var(--g));border:var(--bd);border-radius:var(--rs);overflow:hidden;box-shadow:var(--sh)}
+  #app>.tools .tb{height:56px;border-right:1px solid var(--hair)}
+  #app>.tools .tb:last-child{border-right:0}
+  .stage .panel{left:var(--g);right:var(--g);bottom:calc(var(--barH,62px) + var(--s2));top:auto;border:var(--bd);border-radius:var(--rs);box-shadow:var(--sh);
+    max-height:calc(100% - var(--hudH,110px) - var(--barH,62px) - var(--g) - var(--s2))}
+}
+@media (min-width:900px){
+  .stage .top{left:var(--g);top:var(--g)}
+  .stage .zoom{right:var(--g);bottom:var(--g)}
+  .panel{border-radius:var(--rs);box-shadow:var(--sh);border:var(--bd)!important;left:var(--g)!important;top:calc(var(--hb) + 2*var(--g))!important}
+  #app>.tools{border:var(--bd);border-radius:var(--rs);overflow:hidden}
+}
 </style>
 
 <div id="app">
@@ -1172,15 +1233,17 @@ function quickAt(i){
   const t=S.tiles[i],[c,r]=cr(i),acts=tileActions(i).filter(a=>a[0]!=='clear'&&a[0]!=='move').slice(0,3);
   const name=(t.type==='crop'?CROPS[t.crop||'weizen'].n:(TNAME[t.type]||'Feld'))+(t.sheep?' + Schaf':'');
   const st=t.type==='crop'?Math.round(t.grow)+' %':t.water!=null&&!['well','rock','pond','moor','deco','hive','pv','wturb','battery'].includes(t.type)?Math.round(t.water)+' % Wasser':'';
-  q.innerHTML=`<div class="qh"><b>${name}</b>${st?`<span>${st}</span>`:''}</div><div class="qb">${acts.map(([a,l,p])=>`<button data-qa="${a}" class="${p?'pri':''} ${blocked(a,i)?'off':''}">${l}</button>`).join('')}<button data-qa="info" class="i" aria-label="Details">i</button></div>`;
+  const ib=`<button data-qa="info" class="i" aria-label="Details">i</button>`;
+  q.innerHTML=acts.length?`<div class="qh"><b>${name}</b>${st?`<span>${st}</span>`:''}</div><div class="qb">${acts.map(([a,l,p])=>`<button data-qa="${a}" class="${p?'pri':''} ${blocked(a,i)?'off':''}">${l}</button>`).join('')}${ib}</div>`
+    :`<div class="qh"><b>${name}</b>${st?`<span>${st}</span>`:''}${ib}</div>`;
   quickI=i;q.hidden=false;placeQuick();sfx('tap');
 }
 function placeQuick(){const q=$('qa');if(q.hidden||quickI<0||!cam)return;const[c,r]=cr(quickI),w=P(c+.5,r+.5),s=toScreen(w.x,w.y-26),st=$('stage');
   const W=q.offsetWidth,H=q.offsetHeight;let x=clamp(s.x-W/2,8,st.clientWidth-W-8),y=s.y-H-6;if(y<parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--hudH')||0)+8)y=s.y+40;
   q.style.transform=`translate(${Math.round(x)}px,${Math.round(y)}px)`;}
 function hideQuick(){const q=$('qa');if(q)q.hidden=true;quickI=-1;}
-function openPanel(p){hideQuick();S.panel=p;panelKey='';$('panel').hidden=false;$('panel').scrollTop=0;renderPanel();gDirty=true;}
-function closePanel(){hideQuick();S.panel=null;$('panel').hidden=true;gDirty=true;}
+function openPanel(p){hideQuick();document.body.classList.add('panel-open');S.panel=p;panelKey='';$('panel').hidden=false;$('panel').scrollTop=0;renderPanel();gDirty=true;}
+function closePanel(){hideQuick();document.body.classList.remove('panel-open');S.panel=null;$('panel').hidden=true;gDirty=true;}
 const cell=(k,v,frac,alert)=>`<div class="cell"><span class="k">${k}</span><span class="v${alert?' alert':''}">${v}</span>${frac==null?'':`<div class="bar"><i class="${alert?'alert':''}" style="width:${clamp(frac,0,1)*100}%"></i></div>`}</div>`;
 const head=(t,k)=>`<div class="ph"><b>${t}</b>${k?`<span class="k">${k}</span>`:''}<button class="x" data-a="close" aria-label="Schließen">×</button></div>`;
 const TNAME={pv:'Solarfeld',wturb:'Windrad',battery:'Batterie',deco:'Deko',hive:'Bienenstock',moor:'Feuchtwiese',pond:'Teich',soil:'Acker',crop:'Weizen',tree:'Obstbaum',grass:'Wiese',hedge:'Hecke',well:'Brunnen',eroded:'Ödland',forest:'Wald',rock:'Fels'};
@@ -2362,9 +2425,10 @@ $('bStore').onclick=()=>S.panel&&S.panel.k==='store'?closePanel():openPanel({k:'
 $('bAlert').onclick=focusAlert;
 $('bGoals').onclick=()=>S.panel&&S.panel.k==='goals'?closePanel():openPanel({k:'goals'});
 $('bNews').onclick=()=>{if(S.panel&&S.panel.k==='news'){closePanel();return;}S.newsUnread=false;openPanel({k:'news'});hud();};
-{const hd=document.querySelector('#app>header'),tl=$('tools'),sync=()=>{const s=document.documentElement.style;s.setProperty('--hudH',hd.offsetHeight+'px');s.setProperty('--barH',(tl.offsetHeight+8)+'px');};
+{const hd=document.querySelector('#app>header'),tl=$('tools'),sync=()=>{const s=document.documentElement.style;s.setProperty('--hudH',hd.offsetHeight+'px');s.setProperty('--barH',(tl.offsetHeight+12)+'px');};
  try{new ResizeObserver(sync).observe(hd);new ResizeObserver(sync).observe(tl);}catch(e){}sync();
  $('cap').addEventListener('click',()=>$('cap').classList.toggle('open'));
+ document.querySelector('#app .r2').appendChild($('moreBtn'));
  $('moreBtn').addEventListener('click',()=>{const m=hd.classList.toggle('showall');$('moreBtn').textContent=m?'−':'+3';$('moreBtn').setAttribute('aria-expanded',m);setTimeout(sync,0);});}
 $('qa').addEventListener('click',e=>{const b=e.target.closest('[data-qa]');if(!b||quickI<0)return;const a=b.dataset.qa,i=quickI;
   if(a==='info'){openPanel({k:'tile',i});return;}

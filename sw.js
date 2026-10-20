@@ -1,5 +1,5 @@
 // Letzter Regen – offline cache. Bump VERSION when you upload a new index.html.
-const VERSION='regen-v34';
+const VERSION='regen-v35';
 const CORE=['./','./index.html','./manifest.webmanifest','./icon-192.png','./icon-512.png','./apple-touch-icon.png',
   './phaser.min.js'];
 self.addEventListener('install',e=>{e.waitUntil(caches.open(VERSION).then(c=>Promise.all(CORE.map(u=>c.add(new Request(u,{mode:u.startsWith('http')?'no-cors':'same-origin'})).catch(()=>{})))).then(()=>self.skipWaiting()));});
