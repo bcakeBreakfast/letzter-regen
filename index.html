@@ -230,6 +230,36 @@ button:focus-visible{outline:2px solid var(--signal);outline-offset:2px}
   .panel{right:auto;width:min(520px,calc(100% - 20px));left:10px;top:56px;border:1px solid var(--ink);border-bottom-width:2px;max-height:calc(100% - 66px)}
 }
 @media (min-width:1400px){#app{grid-template-columns:420px 1fr}}
+/* phones: the farm fills the screen, controls float above it */
+@media (max-width:899px){
+  #app{top:0;bottom:0;padding:0;max-width:none;display:block}
+  #app>.stage{position:absolute;inset:0;margin:0}
+  #app>header{position:absolute;left:0;right:0;top:0;z-index:5;padding:calc(env(safe-area-inset-top,0px) + 6px) 10px 5px;
+    background:color-mix(in srgb,var(--paper) 90%,transparent);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border-bottom:1px solid var(--hair)}
+  .r1{grid-template-columns:auto 1fr auto auto;gap:0 10px;padding-bottom:5px;align-items:center}
+  .lv{font-size:28px;line-height:.85}
+  .r1 .cell .k{font-size:9px}
+  .wxb .v{font-size:13px}
+  .rb{width:30px;height:30px;font-size:11px}
+  .r2{display:flex;overflow-x:auto;scrollbar-width:none;gap:16px;padding-block:5px 3px;border-bottom:0;-webkit-overflow-scrolling:touch}
+  .r2::-webkit-scrollbar{display:none}
+  .r2 .cell{flex:0 0 auto;min-width:56px;gap:2px}
+  .r2 .cell .k{font-size:9px}
+  .r2 .cell .v{font-size:13px}
+  .r2 .bar{margin-top:0}
+  .cap{margin:3px 0 0;font-size:12px;line-height:1.35;height:auto;-webkit-line-clamp:1;cursor:pointer}
+  .cap.open{-webkit-line-clamp:5}
+  #app>.tools{position:absolute;left:8px;right:8px;bottom:calc(env(safe-area-inset-bottom,0px) + 8px);z-index:5;border:1px solid var(--ink);background:var(--paper);box-shadow:0 6px 18px rgba(0,0,0,.25)}
+  #app>.tools .tb{flex:1 1 auto;justify-content:center;height:46px;line-height:46px}
+  .stage .top{top:calc(var(--hudH,110px) + 8px);left:8px;right:56px}
+  .stage .top button{height:32px;font-size:11px;padding-inline:10px;box-shadow:0 2px 8px rgba(0,0,0,.18)}
+  .stage .mode{top:calc(var(--hudH,110px) + 8px);left:8px;right:8px}
+  .stage .toast{top:calc(var(--hudH,110px) + 50px)}
+  .stage .zoom{bottom:calc(var(--barH,62px) + 14px);right:8px}
+  .stage .zoom button{width:34px;height:34px}
+  .stage .panel{top:auto;bottom:calc(var(--barH,62px) + 6px);left:6px;right:6px;max-height:calc(100% - var(--hudH,110px) - var(--barH,62px) - 24px);
+    border:1px solid var(--ink);border-bottom-width:1px;box-shadow:0 -6px 24px rgba(0,0,0,.28)}
+}
 @media (prefers-reduced-motion:reduce){.tut-ring,.tut-tap,.tut-tap::before,.tut-tap::after,.tut-card.enter,.tut-hint::before{animation:none}}
 </style>
 
@@ -2257,6 +2287,9 @@ $('bStore').onclick=()=>S.panel&&S.panel.k==='store'?closePanel():openPanel({k:'
 $('bAlert').onclick=focusAlert;
 $('bGoals').onclick=()=>S.panel&&S.panel.k==='goals'?closePanel():openPanel({k:'goals'});
 $('bNews').onclick=()=>{if(S.panel&&S.panel.k==='news'){closePanel();return;}S.newsUnread=false;openPanel({k:'news'});hud();};
+{const hd=document.querySelector('#app>header'),tl=$('tools'),sync=()=>{const s=document.documentElement.style;s.setProperty('--hudH',hd.offsetHeight+'px');s.setProperty('--barH',(tl.offsetHeight+8)+'px');};
+ try{new ResizeObserver(sync).observe(hd);new ResizeObserver(sync).observe(tl);}catch(e){}sync();
+ $('cap').addEventListener('click',()=>$('cap').classList.toggle('open'));}
 $('pwBtn').onclick=$('klBtn').onclick=()=>S.panel&&S.panel.k==='klima'?closePanel():openPanel({k:'klima'});
 $('wxBtn').onclick=()=>S.panel&&S.panel.k==='weather'?closePanel():openPanel({k:'weather'});
 $('bPause').onclick=()=>{S.paused=!S.paused;hud();};
