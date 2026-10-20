@@ -1773,7 +1773,8 @@ function drawObjects(time){
   for(let p=0;p<NP*NP;p++){if(!plotBuyable(p))continue;const pc=p%NP,pr=Math.floor(p/NP),q=P(pc*PLOT+3.5,pr*PLOT+3.5);
     setLabel('plot'+p,q.x,q.y,'Land · '+plotPrice().coin+' T',false,seen);}
   const pp=S.panel;
-  if(pp&&(pp.k==='tile'||pp.k==='bld')){const t=S.tiles[pp.i],[c,r]=cr(pp.i),s=t.size===2?2:1;g.lineStyle(2,COL.red,1);g.strokePoints(diamond(c,r,s,s),true);}
+  {const si=quickI>=0?quickI:(pp&&(pp.k==='tile'||pp.k==='bld'))?pp.i:-1;if(si>=0){const t=S.tiles[si],[c,r]=cr(si),s=t.size===2?2:1,pu=0.5+0.5*Math.sin(time/260);
+    g.fillStyle(0xffffff,0.16+0.12*pu);g.fillPoints(diamond(c,r,s,s,0.04),true);g.lineStyle(4,0x101621,0.55);g.strokePoints(diamond(c,r,s,s),true);g.lineStyle(2.2,COL.red,1);g.strokePoints(diamond(c,r,s,s),true);}}
   if(pp&&pp.k==='land'){const pc=pp.p%NP,pr=Math.floor(pp.p/NP);g.lineStyle(2,COL.red,1);g.strokePoints(diamond(pc*PLOT,pr*PLOT,PLOT,PLOT),true);}
   if(tutTiles.length){const al=0.45+0.45*Math.sin(time/220);g.lineStyle(2.5,COL.hl,al);
     for(const i of tutTiles){const t=S.tiles[i];if(!t)continue;const[c,r]=cr(i),s=t.size===2?2:1;g.strokePoints(diamond(c,r,s,s,-0.05),true);}}
