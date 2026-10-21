@@ -1097,7 +1097,7 @@ function narrate(){
 /* ================= actions ================= */
 const ripe=t=>(t.type==='crop'||t.type==='tree')&&t.grow>=100;
 const woolReady=t=>t.sheep&&t.sheep.wool>=1;
-const COST={hive:60,mais:4,hirse:3,sonne:5,feedmill:150,coop:180,oilmill:260,moor:30,pond:40,wheat:2,tree:30,grass:6,hedge:15,mulch:4,well:80,sheep:35,water:0,mill:60,press:120,spin:160,bakery:200,cistern:120};
+const COST={pv:90,wturb:200,battery:110,hive:60,mais:4,hirse:3,sonne:5,feedmill:150,coop:180,oilmill:260,moor:30,pond:40,wheat:2,tree:30,grass:6,hedge:15,mulch:4,well:80,sheep:35,water:0,mill:60,press:120,spin:160,bakery:200,cistern:120};
 function toast(m,kind,ms){if(kind!=='info')sfx('error');const el=$('toast');el.textContent=m;el.classList.toggle('info',kind==='info');el.classList.add('on');clearTimeout(toastT);toastT=setTimeout(()=>el.classList.remove('on'),ms||1600);}
 const free2=(k,own)=>{const t=S.tiles[k];return owned(k)&&((own!=null&&t.ref===own)||((t.type==='soil'||t.type==='grass')&&!t.sheep&&t.ref<0&&!(t.fire>0)));};
 function fits2(a,own){const[c,r]=cr(a);if(c+1>=COLS||r+1>=ROWS)return false;return footprint(a).every(k=>free2(k,own));}
@@ -1572,6 +1572,29 @@ function floatAt(i,txt,col){
   const t=scene.add.text(p.x,p.y-30,txt,{fontFamily:"Archivo,'Helvetica Neue',Arial,sans-serif",fontSize:'13px',fontStyle:'bold',color,stroke:'#111111',strokeThickness:4}).setOrigin(.5).setDepth(30).setResolution(Math.max(2,dpr*2));
   scene.tweens.add({targets:t,y:t.y-26,alpha:0,duration:1500,ease:'Cubic.easeOut',onComplete:()=>t.destroy()});
 }
+const PICON={"weizen": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 32 32\"><path d=\"M16 29V9\" stroke=\"#101621\" stroke-width=\"1.6\" stroke-linejoin=\"round\" stroke-linecap=\"round\" fill=\"none\"/><g fill=\"#f1c84b\" stroke=\"#101621\" stroke-width=\"1.6\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><ellipse cx=\"13\" cy=\"12\" rx=\"2.6\" ry=\"4\" transform=\"rotate(-25 13 12)\"/><ellipse cx=\"19\" cy=\"12\" rx=\"2.6\" ry=\"4\" transform=\"rotate(25 19 12)\"/><ellipse cx=\"13\" cy=\"19\" rx=\"2.6\" ry=\"4\" transform=\"rotate(-25 13 19)\"/><ellipse cx=\"19\" cy=\"19\" rx=\"2.6\" ry=\"4\" transform=\"rotate(25 19 19)\"/><ellipse cx=\"16\" cy=\"6\" rx=\"2.4\" ry=\"3.6\"/></g></svg>", "mehl": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 32 32\"><path d=\"M9 11c0-3 2-5 7-5s7 2 7 5l2 15c0 2-2 3-9 3s-9-1-9-3z\" fill=\"#f6f1e4\" stroke=\"#101621\" stroke-width=\"1.6\" stroke-linejoin=\"round\" stroke-linecap=\"round\"/><path d=\"M11 9h10\" stroke=\"#101621\" stroke-width=\"1.6\" stroke-linejoin=\"round\" stroke-linecap=\"round\"/><path d=\"M16 15l-2 6h4z\" fill=\"#f1c84b\" stroke=\"#101621\" stroke-width=\"1.6\" stroke-linejoin=\"round\" stroke-linecap=\"round\"/></svg>", "wolle": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 32 32\"><circle cx=\"16\" cy=\"17\" r=\"10\" fill=\"#ffffff\" stroke=\"#101621\" stroke-width=\"1.6\" stroke-linejoin=\"round\" stroke-linecap=\"round\"/><path d=\"M9 13c4 1 6 4 6 9M13 8c3 2 5 6 4 12M19 9c1 3 3 5 6 6\" fill=\"none\" stroke=\"#101621\" stroke-width=\"1.6\" stroke-linejoin=\"round\" stroke-linecap=\"round\"/></svg>", "saft": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 32 32\"><path d=\"M13 4h6v4l2 3v16c0 1-1 2-2 2h-6c-1 0-2-1-2-2V11l2-3z\" fill=\"#da4532\" stroke=\"#101621\" stroke-width=\"1.6\" stroke-linejoin=\"round\" stroke-linecap=\"round\"/><path d=\"M11 15h10v7H11z\" fill=\"#f6f1e4\" stroke=\"#101621\" stroke-width=\"1.6\" stroke-linejoin=\"round\" stroke-linecap=\"round\"/><circle cx=\"16\" cy=\"18.5\" r=\"1.8\" fill=\"#79ad5a\"/></svg>", "honig": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 32 32\"><path d=\"M9 11h14v14c0 2-2 4-7 4s-7-2-7-4z\" fill=\"#e8a33c\" stroke=\"#101621\" stroke-width=\"1.6\" stroke-linejoin=\"round\" stroke-linecap=\"round\"/><path d=\"M8 7h16v4H8z\" fill=\"#a87a52\" stroke=\"#101621\" stroke-width=\"1.6\" stroke-linejoin=\"round\" stroke-linecap=\"round\"/><path d=\"M11 16c2 0 2 3 4 3s2-3 4-3\" fill=\"none\" stroke=\"#101621\" stroke-width=\"1.6\" stroke-linejoin=\"round\" stroke-linecap=\"round\"/></svg>", "eier": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 32 32\"><ellipse cx=\"12\" cy=\"18\" rx=\"6\" ry=\"8\" fill=\"#f6f1e4\" stroke=\"#101621\" stroke-width=\"1.6\" stroke-linejoin=\"round\" stroke-linecap=\"round\"/><ellipse cx=\"20\" cy=\"20\" rx=\"6\" ry=\"7.5\" fill=\"#e8d8b4\" stroke=\"#101621\" stroke-width=\"1.6\" stroke-linejoin=\"round\" stroke-linecap=\"round\"/></svg>", "brot": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 32 32\"><path d=\"M5 21c0-7 5-11 11-11s11 4 11 11c0 3-2 5-11 5S5 24 5 21z\" fill=\"#d9a35a\" stroke=\"#101621\" stroke-width=\"1.6\" stroke-linejoin=\"round\" stroke-linecap=\"round\"/><path d=\"M11 15l2 4M16 13l1 5M21 15l-1 4\" fill=\"none\" stroke=\"#101621\" stroke-width=\"1.6\" stroke-linejoin=\"round\" stroke-linecap=\"round\"/></svg>", "kuchen": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 32 32\"><path d=\"M5 18l22-8v10L5 27z\" fill=\"#f6f1e4\" stroke=\"#101621\" stroke-width=\"1.6\" stroke-linejoin=\"round\" stroke-linecap=\"round\"/><path d=\"M5 18l22-8\" fill=\"none\" stroke=\"#101621\" stroke-width=\"1.6\" stroke-linejoin=\"round\" stroke-linecap=\"round\"/><path d=\"M5 22l22-8\" fill=\"none\" stroke=\"#da4532\" stroke-width=\"2.4\"/><circle cx=\"21\" cy=\"9\" r=\"2.4\" fill=\"#da4532\" stroke=\"#101621\" stroke-width=\"1.6\" stroke-linejoin=\"round\" stroke-linecap=\"round\"/></svg>", "hkuchen": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 32 32\"><path d=\"M5 18l22-8v10L5 27z\" fill=\"#e8c27a\" stroke=\"#101621\" stroke-width=\"1.6\" stroke-linejoin=\"round\" stroke-linecap=\"round\"/><path d=\"M5 22l22-8\" fill=\"none\" stroke=\"#e8a33c\" stroke-width=\"2.6\"/><path d=\"M14 13c0 3-1 5-1 7\" fill=\"none\" stroke=\"#e8a33c\" stroke-width=\"2.2\" stroke-linecap=\"round\"/></svg>", "garn": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 32 32\"><circle cx=\"16\" cy=\"17\" r=\"10\" fill=\"#9a8fd0\" stroke=\"#101621\" stroke-width=\"1.6\" stroke-linejoin=\"round\" stroke-linecap=\"round\"/><path d=\"M8 12c6 1 11 6 12 14M10 22c4-6 9-9 15-9M16 7c-1 6 0 12 4 19\" fill=\"none\" stroke=\"#101621\" stroke-width=\"1.6\" stroke-linejoin=\"round\" stroke-linecap=\"round\"/></svg>", "futter": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 32 32\"><path d=\"M9 11c0-3 2-5 7-5s7 2 7 5l2 15c0 2-2 3-9 3s-9-1-9-3z\" fill=\"#9cc874\" stroke=\"#101621\" stroke-width=\"1.6\" stroke-linejoin=\"round\" stroke-linecap=\"round\"/><path d=\"M11 9h10\" stroke=\"#101621\" stroke-width=\"1.6\" stroke-linejoin=\"round\" stroke-linecap=\"round\"/><circle cx=\"14\" cy=\"18\" r=\"1.2\" fill=\"#f1c84b\"/><circle cx=\"18\" cy=\"21\" r=\"1.2\" fill=\"#f1c84b\"/><circle cx=\"17\" cy=\"16\" r=\"1.2\" fill=\"#f1c84b\"/></svg>", "oel": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 32 32\"><path d=\"M13 4h6v4l2 3v16c0 1-1 2-2 2h-6c-1 0-2-1-2-2V11l2-3z\" fill=\"#f1c84b\" stroke=\"#101621\" stroke-width=\"1.6\" stroke-linejoin=\"round\" stroke-linecap=\"round\"/><circle cx=\"16\" cy=\"19\" r=\"3.4\" fill=\"#e8a33c\" stroke=\"#101621\" stroke-width=\"1.6\" stroke-linejoin=\"round\" stroke-linecap=\"round\"/></svg>", "aepfel": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 32 32\"><path d=\"M16 10c-3-3-10-2-10 6 0 7 5 12 10 10 5 2 10-3 10-10 0-8-7-9-10-6z\" fill=\"#da4532\" stroke=\"#101621\" stroke-width=\"1.6\" stroke-linejoin=\"round\" stroke-linecap=\"round\"/><path d=\"M16 10c0-3 1-5 3-6\" fill=\"none\" stroke=\"#101621\" stroke-width=\"1.6\" stroke-linejoin=\"round\" stroke-linecap=\"round\"/><path d=\"M17 7c3-2 6-1 7 1-3 2-5 1-7-1z\" fill=\"#79ad5a\" stroke=\"#101621\" stroke-width=\"1.6\" stroke-linejoin=\"round\" stroke-linecap=\"round\"/></svg>", "mais": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 32 32\"><ellipse cx=\"16\" cy=\"16\" rx=\"5\" ry=\"11\" fill=\"#f1c84b\" stroke=\"#101621\" stroke-width=\"1.6\" stroke-linejoin=\"round\" stroke-linecap=\"round\"/><path d=\"M11 22c-3-2-5-6-4-12 3 3 5 7 6 12M21 22c3-2 5-6 4-12-3 3-5 7-6 12\" fill=\"#79ad5a\" stroke=\"#101621\" stroke-width=\"1.6\" stroke-linejoin=\"round\" stroke-linecap=\"round\"/></svg>", "hirse": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 32 32\"><path d=\"M16 29V12\" stroke=\"#101621\" stroke-width=\"1.6\" stroke-linejoin=\"round\" stroke-linecap=\"round\" fill=\"none\"/><g fill=\"#d9b24a\" stroke=\"#101621\" stroke-width=\"1.6\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><circle cx=\"16\" cy=\"8\" r=\"3\"/><circle cx=\"12\" cy=\"12\" r=\"2.6\"/><circle cx=\"20\" cy=\"12\" r=\"2.6\"/><circle cx=\"13\" cy=\"17\" r=\"2.4\"/><circle cx=\"19\" cy=\"17\" r=\"2.4\"/></g></svg>", "sonne": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 32 32\"><g fill=\"#f1c84b\" stroke=\"#101621\" stroke-width=\"1.6\" stroke-linejoin=\"round\" stroke-linecap=\"round\"><ellipse cx=\"16\" cy=\"7\" rx=\"2.6\" ry=\"4.4\" transform=\"rotate(0 16 16)\"/><ellipse cx=\"16\" cy=\"7\" rx=\"2.6\" ry=\"4.4\" transform=\"rotate(40 16 16)\"/><ellipse cx=\"16\" cy=\"7\" rx=\"2.6\" ry=\"4.4\" transform=\"rotate(80 16 16)\"/><ellipse cx=\"16\" cy=\"7\" rx=\"2.6\" ry=\"4.4\" transform=\"rotate(120 16 16)\"/><ellipse cx=\"16\" cy=\"7\" rx=\"2.6\" ry=\"4.4\" transform=\"rotate(160 16 16)\"/><ellipse cx=\"16\" cy=\"7\" rx=\"2.6\" ry=\"4.4\" transform=\"rotate(200 16 16)\"/><ellipse cx=\"16\" cy=\"7\" rx=\"2.6\" ry=\"4.4\" transform=\"rotate(240 16 16)\"/><ellipse cx=\"16\" cy=\"7\" rx=\"2.6\" ry=\"4.4\" transform=\"rotate(280 16 16)\"/><ellipse cx=\"16\" cy=\"7\" rx=\"2.6\" ry=\"4.4\" transform=\"rotate(320 16 16)\"/></g><circle cx=\"16\" cy=\"16\" r=\"5\" fill=\"#7a5236\" {K}/></svg>", "holz": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 32 32\"><rect x=\"5\" y=\"16\" width=\"22\" height=\"7\" rx=\"3.5\" fill=\"#a87a52\" stroke=\"#101621\" stroke-width=\"1.6\" stroke-linejoin=\"round\" stroke-linecap=\"round\"/><rect x=\"8\" y=\"9\" width=\"18\" height=\"7\" rx=\"3.5\" fill=\"#a87a52\" stroke=\"#101621\" stroke-width=\"1.6\" stroke-linejoin=\"round\" stroke-linecap=\"round\"/><circle cx=\"8.5\" cy=\"19.5\" r=\"2.4\" fill=\"#e8d8b4\" stroke=\"#101621\" stroke-width=\"1.6\" stroke-linejoin=\"round\" stroke-linecap=\"round\"/><circle cx=\"11.5\" cy=\"12.5\" r=\"2.4\" fill=\"#e8d8b4\" stroke=\"#101621\" stroke-width=\"1.6\" stroke-linejoin=\"round\" stroke-linecap=\"round\"/></svg>"};
+function makePickupTex(sc){
+  const bc=sc.textures.createCanvas('pkbub',72,84),c=bc.getContext();
+  c.fillStyle='rgba(16,22,33,.18)';c.beginPath();c.ellipse(36,80,14,3.5,0,0,7);c.fill();
+  c.beginPath();c.arc(36,34,30,0,Math.PI*2);c.moveTo(27,60);c.lineTo(36,76);c.lineTo(45,60);c.closePath();
+  c.fillStyle='#f6f7f7';c.fill();c.lineWidth=3.2;c.strokeStyle='#101621';c.stroke();
+  c.beginPath();c.arc(36,34,28.4,0,Math.PI*2);c.fillStyle='#f6f7f7';c.fill();bc.refresh();
+  for(const k in PICON){const img=new Image();img.onload=()=>{const t=sc.textures.createCanvas('pi_'+k,96,96);t.getContext().drawImage(img,0,0,96,96);t.refresh();};
+    img.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(PICON[k]);}
+}
+const pickups=new Map();
+function pickupAt(key,i,x,y,item,n,seen,time){
+  seen.add('pk'+key);let o=pickups.get(key);
+  if(!o){o={b:scene.add.image(0,0,'pkbub').setOrigin(0.5,0.95).setDepth(26),ic:scene.add.image(0,0,'__DEFAULT').setDepth(26.1),t:null,item:null,born:time};pickups.set(key,o);}
+  o.i=i;const tk='pi_'+item;if(o.item!==item&&scene.textures.exists(tk)){o.ic.setTexture(tk);o.item=item;}
+  const age=Math.min(1,(time-o.born)/260),pop=age<1?Math.sin(age*Math.PI)*0.25+age:1,bob=Math.sin(time/380+i)*2.2,s=0.42*pop;
+  o.b.setScale(s).setPosition(x,y+bob);o.ic.setDisplaySize(17*pop,17*pop).setPosition(x,y+bob-(84*0.95-34)*s);o.ic.setVisible(!!o.item);
+  o.x=x;o.y=y+bob-(84*0.95-34)*s;
+  if(n>1){if(!o.t){o.t=scene.add.text(0,0,'',{fontFamily:"Archivo,'Helvetica Neue',Arial,sans-serif",fontSize:'8px',fontStyle:'bold',color:'#ffffff',backgroundColor:'#da4532',padding:{x:3,y:1}}).setOrigin(0.5).setDepth(26.2).setResolution(Math.max(2,dpr*2));}
+    const tx='×'+n;if(o.t.text!==tx)o.t.setText(tx);o.t.setPosition(x+11*pop,o.y-10*pop).setVisible(true);}
+  else if(o.t)o.t.setVisible(false);
+}
+function pickupHit(wx,wy){let best=-1,bd=1e9;pickups.forEach(o=>{const d=Math.hypot(wx-o.x,wy-o.y);if(d<16&&d<bd){bd=d;best=o.i;}});return best;}
 function setLabel(key,x,y,txt,hot,seen){
   let t=labels.get(key);if(seen)seen.add(key);
   if(!txt){if(t){t.destroy();labels.delete(key);}return;}
@@ -1846,6 +1869,7 @@ function drawObjects(time){
     if(t.type==='wturb'||t.type==='crop'||t.type==='well'||t.type==='hive'||t.type==='deco'||t.type==='npump'||t.sheep||t.fire>0||t.pest)drawObject(L[d],i,time,seen);
   }
   labels.forEach((t,k)=>{if(!seen.has(k)){t.destroy();labels.delete(k);}});
+  pickups.forEach((o,k)=>{if(!seen.has('pk'+k)){o.b.destroy();o.ic.destroy();if(o.t)o.t.destroy();pickups.delete(k);}});
   sprites.forEach((o,k)=>{if(!seen.has('sp'+k)){o.img.destroy();if(o.sails)o.sails.destroy();if(o.fx)o.fx.destroy();sprites.delete(k);}});
   critters.forEach((o,k)=>{if(o.seen!==critFrame){if(o.sh)o.sh.destroy();o.destroy();critters.delete(k);}else if(o.sh){const w=o.displayWidth*0.8;o.sh.setPosition(o.x+2,o.y-1).setDisplaySize(w,w*0.42).setVisible(o.visible&&o.texture.key!=='n_bugs');}});critFrame++;
   // land for sale
@@ -1896,7 +1920,7 @@ function drawObject(g,i,time,seen){
       const x=D+Math.cos(an)*(10+k*3)*far,y=Dy-8+Math.sin(an*1.7)*6*far-Math.abs(Math.sin(time/90+k))*1.2;
       const fr=(Math.floor(time/45+k)%2)?'bee1':'bee',b=critter('bee'+i+'_'+k,fr,24);if(b.texture.key!==fr)b.setTexture(fr);b.setPosition(x,y);b.setFlipX(Math.sin(an)<0);b.setScale(0.42);}}}
   if(t.type==='deco'&&t.deco==='lamp'){const n=nightAmt()*(S.lit?1:0);if(n>0){glowAt(scene.hi,C.x+3,C.y-14,n,18);scene.hi.fillStyle(0xffc070,0.08*n);scene.hi.fillEllipse(C.x,C.y+2,40,14);}}
-  if(t.type==='hive'&&(t.honey||0)>=1)setLabel('hv'+i,C.x,C.y-34,'Honig'+(t.honey>=2?' ×'+Math.floor(t.honey):''),true,seen);
+  if(t.type==='hive'&&(t.honey||0)>=1)pickupAt('hv'+i,i,C.x+2,C.y-18,'honig',Math.floor(t.honey),seen,time);
   if(t.type==='well'){
     const y=wellYield(t);
     if(y<=0){g.fillStyle(COL.red,1);g.fillCircle(C.x,C.y-10,2.6);}
@@ -1935,7 +1959,7 @@ function drawObject(g,i,time,seen){
     const fr=mv?'n_sh'+(1+Math.floor(time/140)%4):'n_sh0',spr=critter('sheep'+i,fr,5+(c+r)*0.01+0.0045);if(spr.texture.key!==fr)spr.setTexture(fr);
     {const TX=TEX[fr];spr.setOrigin(TX.ox,TX.oy).setScale(0.85/TX.k).setPosition(p.x,p.y+2).setFlipX(f<0);}
     if(weak){spr.setTint(0xb0a99a);}else spr.clearTint();
-    if(sh.wool>=1)setLabel('s'+i,p.x,p.y-22,'Wolle',true,seen);
+    if(sh.wool>=1)pickupAt('s'+i,i,p.x,p.y-13,'wolle',1,seen,time);
     else if(weak){g.fillStyle(COL.red,1);g.fillRect(p.x-1.5,p.y-28,3,6);}
   }
   if(false){
@@ -1944,7 +1968,7 @@ function drawObject(g,i,time,seen){
     g.lineStyle(1.8,COL.ink,1);for(const lx of[-5,-2,3,6])g.lineBetween(p.x+lx*f,p.y-5,p.x+lx*f,p.y);
     crown(g,p.x,p.y-9,7,[[0.5,0.2,0.75],[-0.4,0.1,0.8],[0.1,-0.35,0.8],[0.9*f,-0.1,0.55]],weak?COL.l2:COL.paper,weak?COL.l3:COL.l1);
     g.fillStyle(COL.ink,1);g.fillEllipse(p.x+10*f,p.y-11,6,7);g.fillEllipse(p.x+7*f,p.y-14,4,2.4);
-    if(sh.wool>=1)setLabel('s'+i,p.x,p.y-20,'Wolle',true,seen);
+    if(sh.wool>=1)pickupAt('s'+i,i,p.x,p.y-13,'wolle',1,seen,time);
     else if(weak){g.fillStyle(COL.red,1);g.fillRect(p.x-1.5,p.y-26,3,6);}
   }
   if(t.pest&&TEX.bug0){for(let k=0;k<7;k++){const sd=t.seed*7.3+k*1.618,key='pest'+i+'_'+k;
@@ -2096,7 +2120,7 @@ function drawBuilding(g,a,time,seen){
   }
   if(b.queue){
     let txt='',hot=false;
-    if(b.out.length){txt=ITEMS[b.out[0]].n+(b.out.length>1?' ×'+b.out.length:'');hot=true;}
+    if(b.out.length){pickupAt('b'+a,a,M.x,topY+6,b.out[0],b.out.length,seen,time);}
     else if(working){if(PWR[type]&&!S.powerOK){txt='Kein Strom';hot=true;}else txt=mmss(b.queue[0].rem);}
     if(txt)setLabel('b'+a,M.x,topY,txt,hot,seen);
   }
@@ -2254,6 +2278,7 @@ function objHit(i,wx,wy){const t=S.tiles[i];
   if(t.size===2&&isBld(t)){const o=sprites.get(i);if(!o)return true;return alphaAt(o.img,wx,wy)>40||(o.sails&&o.sails.texture&&alphaAt(o.sails,wx,wy)>40);}
   const im=images.get(i);return im?alphaAt(im,wx,wy)>40:true;}
 function pickTile(wx,wy){
+  {const pk=pickupHit(wx,wy);if(pk>=0)return pk;}
   const hits=[];for(let i=0;i<N;i++){const t=S.tiles[i];if(isBld(t)&&t.size!==2)continue;const b=objBox(i);if(!b)continue;
     if(wx>=b.x0&&wx<=b.x1&&wy>=b.y0&&wy<=b.y1&&objHit(i,wx,wy)){const[c,r]=cr(i);hits.push({i,d:c+r+(t.size===2?2:0)});}}
   const g=groundTile(wx,wy);
@@ -2417,6 +2442,7 @@ class Farm extends Phaser.Scene{
     this.gg=this.add.graphics().setDepth(0.5);this.go=this.add.graphics().setDepth(2);
     this.layers=[];for(let d=0;d<=COLS+ROWS+2;d++)this.layers.push(this.add.graphics().setDepth(5+d*0.01));
     {const ct=this.textures.createCanvas('softsh',64,64),cx=ct.getContext(),gr=cx.createRadialGradient(32,32,2,32,32,31);gr.addColorStop(0,'rgba(0,0,0,0.9)');gr.addColorStop(0.55,'rgba(0,0,0,0.45)');gr.addColorStop(1,'rgba(0,0,0,0)');cx.fillStyle=gr;cx.fillRect(0,0,64,64);ct.refresh();}
+    makePickupTex(this);
     this.hi=this.add.graphics().setDepth(24);this.fx=this.add.graphics().setDepth(20);
     fitCamera();lastVis=null;gDirty=true;cam.setBackgroundColor(COL.bg);
   }
