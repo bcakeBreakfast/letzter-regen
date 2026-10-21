@@ -719,10 +719,11 @@ function plotBuyable(p){if(S.own[p]||(S.nbPlot&&S.nbPlot[p]))return false;const 
 
 /* ================= simulation ================= */
 function erode(t,i,f){
-  const w=S.weather,sh=shelter(i),dry=t.water<15?1.6:0.6;
-  let loss=w.wind*2.3*dry*(1-sh)*f*(1-(t.hum||0)/200);if(w.kind==='gewitter')loss+=7*(1-sh*0.5)*f;if(t.mulch)loss*=0.5;if(S.snow>0)loss*=0.2;
+  const w=S.weather,sh=shelter(i),dry=t.water<15?1.6:t.water>50?0.08:0.6,rainy=(w.rain||0)>0||w.kind==='regen'||w.kind==='gewitter';
+  let loss=w.wind*2.3*dry*(1-sh)*f*(1-(t.hum||0)/200)*(rainy?0.15:1);if(w.kind==='gewitter')loss+=7*(1-sh*0.5)*f*(t.type==='crop'?0.25:1);if(t.mulch)loss*=0.5;if(S.snow>0)loss*=0.2;
   t.fert-=loss;
-  if(t.fert<=4){floatAt(i,t.type==='crop'?'Verweht':'Ödland','red');Object.assign(t,{type:'eroded',fert:0,grow:0,hp:100,mulch:false,sheep:null,pest:false});gDirty=true;}
+  if(t.type==='crop'){t.fert=Math.max(t.fert,5);return;}
+  if(t.fert<=4){floatAt(i,'Ödland','red');Object.assign(t,{type:'eroded',fert:0,grow:0,hp:100,mulch:false,sheep:null,pest:false});gDirty=true;}
 }
 function ignite(i){const t=S.tiles[i];if(t.fire>0||!flammable(t))return;t.fire=rnd(18,30);gDirty=true;}
 function burn(t,i,dt){
@@ -873,7 +874,8 @@ function runoff(rain){
     const[c,r]=cr(i);let lo=-1,le=t.e;
     for(const [dc,dr] of [[1,0],[-1,0],[0,1],[0,-1]]){const j=idx(c+dc,r+dr);if(j>=0&&S.tiles[j].e<le){le=S.tiles[j].e;lo=j;}}
     if(owned(i)&&(t.type==='soil'||t.type==='crop')&&acc[i]>35){t.fert=Math.max(0,t.fert-(acc[i]-35)*0.06*(t.mulch?0.5:1));gul++;
-      if(t.fert<=4){Object.assign(t,{type:'eroded',fert:0,grow:0,mulch:false,pest:false});floatAt(i,'Weggespült','red');}}
+      if(t.type==='crop')t.fert=Math.max(t.fert,5);
+      else if(t.fert<=4){Object.assign(t,{type:'eroded',fert:0,grow:0,mulch:false,pest:false});floatAt(i,'Weggespült','red');}}
     if(lo>=0)acc[lo]+=acc[i]*0.85;
     else if(acc[i]>55){const k=floodAt(i,acc[i]);flooded+=k;if(owned(i))own+=k;}
   }
@@ -1100,7 +1102,8 @@ function narrate(){
 }
 
 /* ================= actions ================= */
-const ripe=t=>(t.type==='crop'||t.type==='tree')&&t.grow>=100;
+const applesShow=t=>t.grow>=100&&S.weather.s!==2&&S.weather.s!==3&&S.weather.kind!=='frost';
+const ripe=t=>t.type==='crop'?t.grow>=100:t.type==='tree'&&applesShow(t);
 const woolReady=t=>t.sheep&&t.sheep.wool>=1;
 const COST={pv:90,wturb:200,battery:110,hive:60,mais:4,hirse:3,sonne:5,feedmill:150,coop:180,oilmill:260,moor:30,pond:40,wheat:2,tree:30,grass:6,hedge:15,mulch:4,well:80,sheep:35,water:0,mill:60,press:120,spin:160,bakery:200,cistern:120};
 function toast(m,kind,ms){if(kind!=='info')sfx('error');const el=$('toast');el.textContent=m;el.classList.toggle('info',kind==='info');el.classList.add('on');clearTimeout(toastT);toastT=setTimeout(()=>el.classList.remove('on'),ms||1600);}
@@ -1672,7 +1675,7 @@ function texFor(t,i){
     case 'crop':if(t.crop==='sonne')return t.grow<35?'n_sK':t.grow<100?'n_sW':'n_sR';if(t.crop==='hirse'||t.crop==='mais')return 'n_'+t.crop+(t.grow<35?'0':'');return(t.crop||'weizen')==='weizen'?'w'+(THEME==='light'?'L':'D')+(t.grow>=100?2:t.grow>=35?1:0):null;
     case 'tree':{const s=S.weather.s;
       if(s===2||(S.weather.kind==='frost'&&t.grow<60))return 'tBare';
-      if(t.grow>=100&&s!==3)return 'tApple';
+      if(applesShow(t))return 'tApple';
       if(s===3&&t.grow<90)return 'tBloom';
       if(s===1)return 'n_laubH';
       return 'tLeaf';}
