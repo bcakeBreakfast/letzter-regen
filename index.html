@@ -330,6 +330,11 @@ button:focus-visible{outline:2px solid var(--signal);outline-offset:2px}
 .more{border-radius:var(--rb);border:var(--bd)}
 body.panel-open .stage .top{visibility:hidden}
 #modeX{display:none}
+.ov-in:has(.ov-hero){min-height:100%;display:flex;flex-direction:column;justify-content:center;gap:var(--s4,16px)}
+.ov-hero{display:flex;flex-direction:column;gap:var(--s4,16px)}
+.ov-hero .lead{max-width:30ch;margin:0}
+.ov-in .btns{display:flex;flex-direction:column;gap:var(--s2);max-width:340px;margin-top:var(--s2)}
+.ov-in .btns .btn{width:100%;border-radius:var(--rb);text-align:center;justify-content:center}
 .qa .qh span{margin-right:auto}
 .qa .qx{width:32px;height:32px;padding:0;margin:-4px -4px -4px 0;border:0;border-radius:var(--rb);font-size:22px;font-weight:500;line-height:1;text-align:center;flex:none}
 .qa .qh .i+.qx{margin-left:0}
@@ -1532,16 +1537,11 @@ function catchUp(){
 }
 function showIntro(){
   $('ovIn').innerHTML=`
-    <div class="ov-top"><span class="k">Ein Farmspiel über Dürre</span><span class="k">Echtzeit</span></div>
+    <div class="ov-hero">
     <h1>Letzter<br>Regen</h1>
     <div class="sq" aria-hidden="true"></div>
-    <p class="lead">Kein Regen in Sicht. Bau deinen Hof auf, liefer Aufträge und halt den Boden fest, den der Wind dir nehmen will.</p>
-    <ol class="steps">
-      <li><b>01</b><span>Ziehen bewegt den Hof, zwei Finger zoomen. Ein Werkzeug wählen und über Felder wischen: ernten, säen, gießen.</span></li>
-      <li><b>02</b><span>Weizen in die Mühle, Mehl in die Bäckerei. Was du herstellst, wandert in die Scheune und dann in die Aufträge.</span></li>
-      <li><b>03</b><span>Jahreszeiten bringen Hitzewellen, Brände, Schädlinge, Stürme und Frost. Wald und Hecken wachsen von selbst.</span></li>
-      <li><b>04</b><span>Kahler Acker verweht. Gras, Hecken, Bäume und Mulch halten ihn fest. Kaufe Land, wenn dein Hof wächst.</span></li>
-    </ol>
+    <p class="lead">Ein Hof, eine Dürre, deine Entscheidungen. Halte Boden, Wasser und Klima am Leben.</p>
+    </div>
     <div class="btns">${savedState?`<button class="btn" id="bCont">Weiter · Level ${savedState.lv}</button>`:''}<button class="btn${savedState?' alt':''}" id="bNew">${savedState?'Neu mit Anleitung':'Mit Anleitung beginnen'}</button><button class="btn alt" id="bFree">Ohne Anleitung</button></div>`;
   $('ov').hidden=false;
   if(savedState)$('bCont').onclick=()=>{if(!savedState)return;S=migrate(savedState);savedState=null;catchUp();begin();};
